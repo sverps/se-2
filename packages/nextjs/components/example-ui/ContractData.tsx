@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { BigNumber } from "ethers";
 import Marquee from "react-fast-marquee";
-import { useAnimationConfig, useScaffoldContractRead, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
+import {
+  useAnimationConfig,
+  useScaffoldContractRead,
+  useScaffoldContractWrite,
+  useScaffoldEventSubscriber,
+} from "~~/hooks/scaffold-eth";
 
 const MARQUEE_PERIOD_IN_SEC = 5;
 
@@ -12,7 +18,23 @@ export const ContractData = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const greetingRef = useRef<HTMLDivElement>(null);
 
+  useScaffoldContractRead("YourContract", "testRead");
+  useScaffoldContractRead("YourContract", "testRead", { args: [] });
+  useScaffoldContractRead("YourContract", "testRead", { args: [BigNumber.from(1), "2"] });
+  useScaffoldContractRead("YourContract", "testRead", { args: [BigNumber.from(1)] });
+  useScaffoldContractRead("YourContract", "testRead", { args: [BigNumber.from(1)], address: "123" });
+  useScaffoldContractRead("YourContract", "totalCounter", { args: [BigNumber.from(1)] });
   const { data: totalCounter } = useScaffoldContractRead("YourContract", "totalCounter");
+
+  useScaffoldContractWrite("YourContract", "setGreeting");
+  useScaffoldContractWrite("YourContract", "setGreeting", { value: "1" });
+  useScaffoldContractWrite("YourContract", "setGreeting", { args: ["new greeting", "wrong string"] });
+  useScaffoldContractWrite("YourContract", "setGreeting", { args: ["new greeting"], address: "123" });
+  useScaffoldContractWrite("YourContract", "setGreeting", {
+    args: ["new greeting"],
+    value: "1",
+    address: "123",
+  });
 
   const { data: currentGreeting, isLoading: isGreetingLoading } = useScaffoldContractRead("YourContract", "greeting");
 

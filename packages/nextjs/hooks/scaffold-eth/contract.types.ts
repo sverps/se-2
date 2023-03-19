@@ -49,3 +49,33 @@ export enum ContractCodeStatus {
   "DEPLOYED",
   "NOT_FOUND",
 }
+
+type AbiStateMutability = "pure" | "view" | "nonpayable" | "payable";
+
+export type FunctionNamesWithoutInputs<
+  TAbi extends Abi,
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability,
+> = Extract<
+  TAbi[number],
+  {
+    type: "function";
+    stateMutability: TAbiStateMutibility;
+    inputs: readonly [];
+  }
+>["name"];
+
+export type FunctionNamesWithInputs<
+  TAbi extends Abi,
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability,
+> = Exclude<
+  Extract<
+    TAbi[number],
+    {
+      type: "function";
+      stateMutability: TAbiStateMutibility;
+    }
+  >,
+  {
+    inputs: readonly [];
+  }
+>["name"];
