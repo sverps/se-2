@@ -51,6 +51,9 @@ export const Header = () => {
           Example UI
         </NavLink>
       </li>
+      <li>
+        <NavLink href="/multisig">Multisig</NavLink>
+      </li>
     </>
   );
 
