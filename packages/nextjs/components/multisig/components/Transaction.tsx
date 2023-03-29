@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { SignedTransaction, useCreateSignedTransaction } from "../hooks/useCreateSignedTransaction";
+import { useDecodeCalldata } from "../hooks/useDecodeCalldata";
+import { Actions } from "./Actions";
+import { stringifySignedTransaction } from "./utils";
 import { BigNumber } from "ethers";
 import { useMutation, useQueryClient } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { stringifySignedTransaction } from "./utils";
-import { Actions } from "./Actions";
 
 export type StoredTransaction = {
   contractAddress: string;
@@ -26,6 +27,11 @@ type TransactionProps = {
 };
 
 export const Transaction = ({ transaction, signaturesRequired }: TransactionProps) => {
+  const { decodedCalldata } = useDecodeCalldata({
+    functionName: transaction.functionName,
+    calldata: transaction.args.data,
+  });
+
   const queryClient = useQueryClient();
   const { data: contractData } = useDeployedContractInfo("MetaMultiSigWallet");
   const { write: submitTransaction } = useScaffoldContractWrite({
@@ -75,10 +81,23 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
   }, [error, saveSignedTransaction, signedTransaction, transaction.signatures]);
 
   return (
-    <div>
-      <div>{transaction.args.nonce.toString()}</div>
-      <div>{transaction.functionName}</div>
-      <div>{`(${transaction.signatures?.length} / ${signaturesRequired})`}</div>
+    <div className="flex flex-col gap-4 py-6 first:pt-0 last:pb-0">
+      <div className="flex w-full items-center">
+        <div className="flex-1">
+          <div className="font-bold">{transaction.functionName ?? "send ether"}</div>
+          {decodedCalldata &&
+            Object.entries(decodedCalldata)
+              .filter(([key]) => !Number.isInteger(Number(key)))
+              .map(([key, value]) => (
+                <div key={key}>
+                  {key}: {value.toString()}
+                </div>
+              ))}
+        </div>
+        <div>
+          <div>{`Signatures: ${transaction.signatures?.length} / ${signaturesRequired}`}</div>
+        </div>
+      </div>
       <Actions>
         <button
           className="btn btn-secondary btn-sm"
@@ -91,7 +110,7 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
         {submitTransaction && (
           <button
             className="btn btn-secondary btn-sm"
-            disabled={transaction.signatures.length >= signaturesRequired}
+            disabled={transaction.signatures.length < signaturesRequired}
             onClick={() => {
               submitTransaction();
             }}

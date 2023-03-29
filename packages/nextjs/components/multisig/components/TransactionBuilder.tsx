@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { Actions } from "./Actions";
+import { Pane } from "./Pane";
 import { Select } from "./Select";
+import { stringifySignedTransaction } from "./utils";
 import { BigNumber } from "ethers";
 import { useMutation, useQueryClient } from "wagmi";
 import { useCalldata } from "~~/components/multisig/hooks/useCalldata";
 import { SignedTransaction, useCreateSignedTransaction } from "~~/components/multisig/hooks/useCreateSignedTransaction";
 import { AddressInput } from "~~/components/scaffold-eth/Input/AddressInput";
 import { IntegerInput } from "~~/components/scaffold-eth/Input/IntegerInput";
-import { Pane } from "./Pane";
-import { stringifySignedTransaction } from "./utils";
-import { Actions } from "./Actions";
 
 enum Action {
   ADD_SIGNER = "ADD_SIGNER",
@@ -57,7 +57,6 @@ export const TransactionBuilder = () => {
     amount,
     data: calldata,
   });
-  console.log({ transaction });
 
   const { mutate } = useMutation({
     mutationFn: async (tx: SignedTransaction) =>
@@ -92,7 +91,7 @@ export const TransactionBuilder = () => {
   }, [mutate, option?.functionName, queryClient, transaction]);
 
   return (
-    <Pane>
+    <Pane className="gap-4">
       <Select
         value={option?.label}
         placeholder="Select transaction type"
@@ -105,26 +104,27 @@ export const TransactionBuilder = () => {
         }}
         options={options.map(o => o.label)}
       />
-      {option && [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
-        <>
-          {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
+      {option &&
+        [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
+          <>
+            {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
+              <div>
+                <AddressInput
+                  placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
+                  value={signerParam}
+                  onChange={newAddress => setSignerParam(newAddress)}
+                />
+              </div>
+            )}
             <div>
-              <AddressInput
-                placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
-                value={signerParam}
-                onChange={newAddress => setSignerParam(newAddress)}
+              <IntegerInput
+                placeholder="New number of signatures"
+                value={signaturesRequired}
+                onChange={value => setSignaturesRequired(value)}
               />
             </div>
-          )}
-          <div>
-            <IntegerInput
-              placeholder="New number of signatures"
-              value={signaturesRequired}
-              onChange={value => setSignaturesRequired(value)}
-            />
-          </div>
-        </>
-      )}
+          </>
+        )}
       {option?.action === Action.SEND_ETHER && (
         <>
           <div>
@@ -146,7 +146,7 @@ export const TransactionBuilder = () => {
         </>
       )}
       <Actions>
-        <button className="btn btn-secondary btn-sm" onClick={() => createSignedTransaction()}>
+        <button className="btn btn-secondary btn-sm" disabled={!option} onClick={() => createSignedTransaction()}>
           New signed tx
         </button>
       </Actions>
