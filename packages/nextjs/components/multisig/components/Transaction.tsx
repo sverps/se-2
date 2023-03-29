@@ -3,9 +3,11 @@ import { SignedTransaction, useCreateSignedTransaction } from "../hooks/useCreat
 import { BigNumber } from "ethers";
 import { useMutation, useQueryClient } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { stringifySignedTransaction } from "./utils";
+import { Actions } from "./Actions";
 
 export type StoredTransaction = {
-  contractAddress: string | undefined;
+  contractAddress: string;
   chainId: number;
   hash: any;
   signatures: `0x${string}`[];
@@ -58,7 +60,7 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...transaction, signatures: [...transaction.signatures, newTx.signature] }),
+        body: stringifySignedTransaction({ ...transaction, signature: newTx.signature }),
       });
     },
     onSuccess: () => {
@@ -77,24 +79,27 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
       <div>{transaction.args.nonce.toString()}</div>
       <div>{transaction.functionName}</div>
       <div>{`(${transaction.signatures?.length} / ${signaturesRequired})`}</div>
-      <button
-        className="btn btn-secondary btn-sm normal-case font-thin bg-base-100"
-        onClick={() => {
-          signTransaction();
-        }}
-      >
-        Sign transaction
-      </button>
-      {submitTransaction && (
+      <Actions>
         <button
-          className="btn btn-secondary btn-sm normal-case font-thin bg-base-100"
+          className="btn btn-secondary btn-sm"
           onClick={() => {
-            submitTransaction();
+            signTransaction();
           }}
         >
-          Send transaction
+          Sign tx
         </button>
-      )}
+        {submitTransaction && (
+          <button
+            className="btn btn-secondary btn-sm"
+            disabled={transaction.signatures.length >= signaturesRequired}
+            onClick={() => {
+              submitTransaction();
+            }}
+          >
+            Send tx
+          </button>
+        )}
+      </Actions>
     </div>
   );
 };

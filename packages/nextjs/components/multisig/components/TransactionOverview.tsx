@@ -2,6 +2,7 @@ import { StoredTransaction, Transaction } from "./Transaction";
 import { BigNumber } from "ethers";
 import { useChainId, useQuery } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { Pane } from "./Pane";
 
 export const TransactionOverview = () => {
   const chainId = useChainId();
@@ -36,16 +37,14 @@ export const TransactionOverview = () => {
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 mb-6 space-y-1 py-4">
-        {transactions?.map(([hash, transaction]) => (
-          <Transaction
-            key={hash}
-            transaction={transaction as StoredTransaction}
-            signaturesRequired={signaturesRequired.toNumber()}
-          />
-        ))}
-      </div>
-    </div>
+    <Pane>
+      {transactions?.map(([hash, transaction]) => (
+        <Transaction
+          key={hash}
+          transaction={transaction as StoredTransaction}
+          signaturesRequired={signaturesRequired.toNumber()}
+        />
+      ))}
+    </Pane>
   );
 };

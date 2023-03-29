@@ -26,7 +26,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // Contract constructor arguments
     args: [
       31337,
-      [deployer, "0x2b459503577F42D1a8E6d73401d3D8F227970d4f", "0xE876d69817E0a4CD325F20D6eC760D2Ec2e15d49"],
+      [
+        deployer,
+        "0x2b459503577F42D1a8E6d73401d3D8F227970d4f",
+        "0xE876d69817E0a4CD325F20D6eC760D2Ec2e15d49",
+        "0x7b6c6aC4EF027DA1732963944e0Be8c49e793Bc5",
+      ],
       1,
     ],
     log: true,

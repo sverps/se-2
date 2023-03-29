@@ -3,9 +3,12 @@ import { Select } from "./Select";
 import { BigNumber } from "ethers";
 import { useMutation, useQueryClient } from "wagmi";
 import { useCalldata } from "~~/components/multisig/hooks/useCalldata";
-import { useCreateSignedTransaction } from "~~/components/multisig/hooks/useCreateSignedTransaction";
+import { SignedTransaction, useCreateSignedTransaction } from "~~/components/multisig/hooks/useCreateSignedTransaction";
 import { AddressInput } from "~~/components/scaffold-eth/Input/AddressInput";
 import { IntegerInput } from "~~/components/scaffold-eth/Input/IntegerInput";
+import { Pane } from "./Pane";
+import { stringifySignedTransaction } from "./utils";
+import { Actions } from "./Actions";
 
 enum Action {
   ADD_SIGNER = "ADD_SIGNER",
@@ -54,23 +57,26 @@ export const TransactionBuilder = () => {
     amount,
     data: calldata,
   });
+  console.log({ transaction });
 
   const { mutate } = useMutation({
-    mutationFn: async (tx: any) =>
+    mutationFn: async (tx: SignedTransaction) =>
       fetch("http://localhost:49832/", {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(tx),
+        body: stringifySignedTransaction(tx),
       }),
   });
   useEffect(() => {
-    if (transaction) {
-      const { signature, ...rest } = transaction;
+    if (option?.functionName && transaction && transaction.signature) {
       mutate(
-        { ...rest, signatures: [signature], functionName: option?.functionName },
+        {
+          ...transaction,
+          functionName: option?.functionName,
+        },
         {
           onSuccess() {
             queryClient.invalidateQueries(["TRANSACTIONS"]);
@@ -86,7 +92,7 @@ export const TransactionBuilder = () => {
   }, [mutate, option?.functionName, queryClient, transaction]);
 
   return (
-    <div className="flex flex-col w-full bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 py-6 gap-4">
+    <Pane>
       <Select
         value={option?.label}
         placeholder="Select transaction type"
@@ -99,27 +105,26 @@ export const TransactionBuilder = () => {
         }}
         options={options.map(o => o.label)}
       />
-      {option &&
-        [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
-          <>
-            {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
-              <div>
-                <AddressInput
-                  placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
-                  value={signerParam}
-                  onChange={newAddress => setSignerParam(newAddress)}
-                />
-              </div>
-            )}
+      {option && [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
+        <>
+          {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
             <div>
-              <IntegerInput
-                placeholder="New number of signatures"
-                value={signaturesRequired}
-                onChange={value => setSignaturesRequired(value)}
+              <AddressInput
+                placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
+                value={signerParam}
+                onChange={newAddress => setSignerParam(newAddress)}
               />
             </div>
-          </>
-        )}
+          )}
+          <div>
+            <IntegerInput
+              placeholder="New number of signatures"
+              value={signaturesRequired}
+              onChange={value => setSignaturesRequired(value)}
+            />
+          </div>
+        </>
+      )}
       {option?.action === Action.SEND_ETHER && (
         <>
           <div>
@@ -140,15 +145,12 @@ export const TransactionBuilder = () => {
           </div>
         </>
       )}
-      <div className="flex w-full justify-end">
-        <button
-          className="btn btn-secondary btn-sm normal-case font-thin bg-base-100"
-          onClick={() => createSignedTransaction()}
-        >
-          Create signed transaction
+      <Actions>
+        <button className="btn btn-secondary btn-sm" onClick={() => createSignedTransaction()}>
+          New signed tx
         </button>
-      </div>
+      </Actions>
       {error && <div>Not the owner</div>}
-    </div>
+    </Pane>
   );
 };

@@ -32,7 +32,11 @@ app.post("/", function (request, response) {
   }
   transactions[key][request.body.hash] = {
     ...request.body,
-    signatures: request.body.signatures.sort((a, b) => a.localeCompare(b)),
+    ...transactions[key][request.body.hash],
+    signatures: [
+      ...(transactions[key][request.body.hash]?.signatures ?? []),
+      request.body.signature,
+    ].sort((a, b) => a.localeCompare(b)),
   };
   console.log("transactions", transactions);
   response.send({ success: true });
