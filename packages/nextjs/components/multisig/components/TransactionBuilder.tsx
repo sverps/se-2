@@ -91,7 +91,7 @@ export const TransactionBuilder = () => {
   }, [mutate, option?.functionName, queryClient, transaction]);
 
   return (
-    <Pane className="gap-4">
+    <Pane title="Create transaction">
       <Select
         value={option?.label}
         placeholder="Select transaction type"
@@ -104,27 +104,26 @@ export const TransactionBuilder = () => {
         }}
         options={options.map(o => o.label)}
       />
-      {option &&
-        [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
-          <>
-            {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
-              <div>
-                <AddressInput
-                  placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
-                  value={signerParam}
-                  onChange={newAddress => setSignerParam(newAddress)}
-                />
-              </div>
-            )}
+      {option && [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
+        <>
+          {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
             <div>
-              <IntegerInput
-                placeholder="New number of signatures"
-                value={signaturesRequired}
-                onChange={value => setSignaturesRequired(value)}
+              <AddressInput
+                placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
+                value={signerParam}
+                onChange={newAddress => setSignerParam(newAddress)}
               />
             </div>
-          </>
-        )}
+          )}
+          <div>
+            <IntegerInput
+              placeholder="New number of signatures"
+              value={signaturesRequired}
+              onChange={value => setSignaturesRequired(value)}
+            />
+          </div>
+        </>
+      )}
       {option?.action === Action.SEND_ETHER && (
         <>
           <div>

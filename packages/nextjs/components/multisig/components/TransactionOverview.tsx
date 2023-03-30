@@ -47,14 +47,16 @@ export const TransactionOverview = () => {
   console.log({ transactions });
 
   return (
-    <Pane className="divide-y divide-base-300">
-      {transactions?.map(([hash, transaction]) => (
-        <Transaction
-          key={hash}
-          transaction={transaction as StoredTransaction}
-          signaturesRequired={signaturesRequired.toNumber()}
-        />
-      ))}
+    <Pane title="Transaction overview" className="min-h-[10rem] divide-y divide-base-300">
+      {transactions?.length
+        ? transactions.map(([hash, transaction]) => (
+            <Transaction
+              key={hash}
+              transaction={transaction as StoredTransaction}
+              signaturesRequired={signaturesRequired.toNumber()}
+            />
+          ))
+        : "No valid pending transactions. You can create a new transaction in the pane above."}
     </Pane>
   );
 };
