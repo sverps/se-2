@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "packages/backend",
       "packages/hardhat",
       "packages/nextjs"
     ]
@@ -26,11 +27,15 @@
     "postinstall": "husky install",
     "precommit": "lint-staged",
     "vercel": "yarn workspace @se-2/nextjs vercel",
-    "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo"
+    "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
+    "backend": "yarn workspace @se-2/backend start"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.21"
   }
 }

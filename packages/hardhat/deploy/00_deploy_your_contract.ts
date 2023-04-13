@@ -21,10 +21,19 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("YourContract", {
+  await deploy("MetaMultiSigWallet", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    args: [
+      31337,
+      [
+        deployer,
+        "0x2b459503577F42D1a8E6d73401d3D8F227970d4f",
+        "0xE876d69817E0a4CD325F20D6eC760D2Ec2e15d49",
+        "0x7b6c6aC4EF027DA1732963944e0Be8c49e793Bc5",
+      ],
+      1,
+    ],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -39,4 +48,4 @@ export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["YourContract"];
+deployYourContract.tags = ["MetaMultiSigWallet"];
