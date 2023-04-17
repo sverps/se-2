@@ -1,8 +1,8 @@
 import { BigNumber, BigNumberish } from "ethers";
 
 export interface CommonInputProps<T = string> {
-  value: T;
-  onChange: (newValue: T) => void;
+  value: T | undefined;
+  onChange: (newValue: T | undefined) => void;
   name?: string;
   placeholder?: string;
 }
@@ -77,7 +77,7 @@ export enum IntegerVariant {
 export const SIGNED_NUMBER_REGEX = /^-?\d+\.?\d*$/;
 export const UNSIGNED_NUMBER_REGEX = /^\.?\d+\.?\d*$/;
 
-export const isValidInteger = (dataType: IntegerVariant, value: BigNumberish, strict = true) => {
+export const isValidInteger = (dataType: IntegerVariant, value: BigNumberish | undefined, strict = true) => {
   const isSigned = dataType.startsWith("i");
   const bitcount = Number(dataType.substring(isSigned ? 3 : 4));
 

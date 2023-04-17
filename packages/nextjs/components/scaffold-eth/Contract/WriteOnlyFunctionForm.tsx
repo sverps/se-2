@@ -36,7 +36,7 @@ export const WriteOnlyFunctionForm = ({
   setRefreshDisplayVariables,
 }: TWriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() => getInitialFormState(functionFragment));
-  const [txValue, setTxValue] = useState<string | BigNumber>("");
+  const [txValue, setTxValue] = useState<string | BigNumber>();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const writeDisabled = !chain || chain?.id !== getTargetNetwork().id;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import { CommonInputProps, InputBase, IntegerVariant, isValidInteger } from "~~/components/scaffold-eth";
 
-type IntegerInputProps = CommonInputProps<string | BigNumber> & {
+type IntegerInputProps = CommonInputProps<string | BigNumber | undefined> & {
   variant?: IntegerVariant;
 };
 

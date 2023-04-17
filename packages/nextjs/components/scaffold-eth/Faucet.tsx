@@ -16,9 +16,9 @@ const FAUCET_ACCOUNT_INDEX = 0;
  */
 export const Faucet = () => {
   const [loading, setLoading] = useState(false);
-  const [inputAddress, setInputAddress] = useState("");
-  const [faucetAddress, setFaucetAddress] = useState("");
-  const [sendValue, setSendValue] = useState("");
+  const [inputAddress, setInputAddress] = useState<string>();
+  const [faucetAddress, setFaucetAddress] = useState<string>();
+  const [sendValue, setSendValue] = useState<string>();
 
   const { chain: ConnectedChain } = useNetwork();
   const provider = getLocalProvider(localhost);
@@ -48,10 +48,10 @@ export const Faucet = () => {
   const sendETH = async () => {
     try {
       setLoading(true);
-      await faucetTxn({ to: inputAddress, value: ethers.utils.parseEther(sendValue) });
+      await faucetTxn({ to: inputAddress, value: sendValue ? ethers.utils.parseEther(sendValue) : undefined });
       setLoading(false);
-      setInputAddress("");
-      setSendValue("");
+      setInputAddress(undefined);
+      setSendValue(undefined);
     } catch (error) {
       const parsedError = getParsedEthersError(error);
       console.error("⚡️ ~ file: Faucet.tsx:sendETH ~ error", error);
