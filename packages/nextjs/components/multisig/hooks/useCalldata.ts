@@ -1,13 +1,18 @@
-import { ethers } from "ethers";
 import { useMemo } from "react";
 import { useDeployedContractInfo } from "../../../hooks/scaffold-eth";
+import { ethers } from "ethers";
 
 export const useCalldata = (functionName?: string, args?: any[]) => {
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo("MetaMultiSigWallet");
 
   const calldata = useMemo(() => {
-    const writeFunctionToHash = deployedContractData?.abi.find(i => i.name === functionName);
+    type DeployedCOntract = Exclude<typeof deployedContractData, undefined>["abi"];
+    type NamedFunction = Extract<DeployedCOntract[number], { readonly anonymous: false }>;
+
+    const writeFunctionToHash = deployedContractData?.abi.find(
+      i => (i as NamedFunction).name === functionName,
+    ) as NamedFunction;
     if (writeFunctionToHash) {
       try {
         const writeInterface = new ethers.utils.Interface([writeFunctionToHash]);
