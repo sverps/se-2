@@ -23,7 +23,7 @@ export const TransactionOverview = () => {
         return [];
       }
       try {
-        const response = await fetch(`http://localhost:49832/${contractData.address}_${chainId}`);
+        const response = await fetch(`/api/storage/${contractData.address}_${chainId}`);
         const data = await response.json();
         return (Object.entries(data) as [string, StoredTransaction][])
           .filter(([, tx]) => nonce?.toString() === tx.args.nonce.toString())
@@ -44,7 +44,6 @@ export const TransactionOverview = () => {
   if (signaturesRequired === undefined) {
     return null;
   }
-  console.log({ transactions });
 
   return (
     <Pane title="Transaction overview" className="min-h-[10rem] divide-y divide-base-300">

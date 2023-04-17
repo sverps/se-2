@@ -60,7 +60,7 @@ export const TransactionBuilder = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (tx: SignedTransaction) =>
-      fetch("http://localhost:49832/", {
+      fetch("/api/storage", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -104,26 +104,27 @@ export const TransactionBuilder = () => {
         }}
         options={options.map(o => o.label)}
       />
-      {option && [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
-        <>
-          {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
+      {option &&
+        [Action.ADD_SIGNER, Action.REMOVE_SIGNER, Action.UPDATE_SIGNATURES_REQUIRED].includes(option.action) && (
+          <>
+            {option.action !== Action.UPDATE_SIGNATURES_REQUIRED && (
+              <div>
+                <AddressInput
+                  placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
+                  value={signerParam}
+                  onChange={newAddress => setSignerParam(newAddress)}
+                />
+              </div>
+            )}
             <div>
-              <AddressInput
-                placeholder={option.action === Action.ADD_SIGNER ? "Address to add" : "Address to remove"}
-                value={signerParam}
-                onChange={newAddress => setSignerParam(newAddress)}
+              <IntegerInput
+                placeholder="New number of signatures"
+                value={signaturesRequired}
+                onChange={value => setSignaturesRequired(value)}
               />
             </div>
-          )}
-          <div>
-            <IntegerInput
-              placeholder="New number of signatures"
-              value={signaturesRequired}
-              onChange={value => setSignaturesRequired(value)}
-            />
-          </div>
-        </>
-      )}
+          </>
+        )}
       {option?.action === Action.SEND_ETHER && (
         <>
           <div>

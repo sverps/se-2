@@ -20,8 +20,8 @@ export const Select = ({ placeholder, options, value, onChange, className }: Sel
       <div>
         <Menu.Button
           className={classNames(
-            "inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
-            value && "font-semibold text-gray-600",
+            "inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+            value ? "font-semibold text-gray-600" : "text-gray-500",
           )}
         >
           {value || placeholder}

@@ -60,7 +60,7 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
       if (!signedTransaction) {
         return;
       }
-      return fetch("http://localhost:49832/", {
+      return fetch("/api/storage", {
         method: "POST",
         headers: {
           Accept: "application/json",
