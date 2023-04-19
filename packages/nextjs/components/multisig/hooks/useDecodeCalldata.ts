@@ -3,8 +3,7 @@ import { useDeployedContractInfo } from "../../../hooks/scaffold-eth";
 import { ethers } from "ethers";
 
 export const useDecodeCalldata = ({ functionName, calldata }: { functionName?: string; calldata: string }) => {
-  const { data: deployedContractData, isLoading: deployedContractLoading } =
-    useDeployedContractInfo("MetaMultiSigWallet");
+  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo("MultisigWallet");
 
   const decodedCalldata = useMemo(() => {
     if (!functionName) {

@@ -6,13 +6,13 @@ import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaff
 
 export const TransactionOverview = () => {
   const chainId = useChainId();
-  const { data: contractData } = useDeployedContractInfo("MetaMultiSigWallet");
+  const { data: contractData } = useDeployedContractInfo("MultisigWallet");
   const { data: signaturesRequired } = useScaffoldContractRead({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "signaturesRequired",
   });
   const { data: nonce } = useScaffoldContractRead({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "nonce",
   });
 

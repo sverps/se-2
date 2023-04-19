@@ -28,8 +28,8 @@ export const useCreateSignedTransaction = ({
 }) => {
   const [signedTransaction, setSignedTransaction] = useState<SignedTransaction>();
   const chainId = useChainId();
-  const { data: contractData } = useDeployedContractInfo("MetaMultiSigWallet");
-  const { data: nonce } = useScaffoldContractRead({ contractName: "MetaMultiSigWallet", functionName: "nonce" });
+  const { data: contractData } = useDeployedContractInfo("MultisigWallet");
+  const { data: nonce } = useScaffoldContractRead({ contractName: "MultisigWallet", functionName: "nonce" });
 
   const to = optionalTo || contractData?.address;
   const amount = optionalAmount || "0";
@@ -38,7 +38,7 @@ export const useCreateSignedTransaction = ({
     refetch: getTransactionHash,
     isFetched,
   } = useScaffoldContractRead({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "getTransactionHash",
     args: [nonce, to, amount ? BigNumber.from(amount) : undefined, data as `0x${string}`],
     enabled: false,
@@ -56,7 +56,7 @@ export const useCreateSignedTransaction = ({
   });
 
   const { data: recoveredAddress, refetch: recover } = useScaffoldContractRead({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "recover",
     args: [signedTransaction?.hash, signature],
     enabled: false,
@@ -68,7 +68,7 @@ export const useCreateSignedTransaction = ({
   }, [recover, signature, signedTransaction]);
 
   const { data: isOwner } = useScaffoldContractRead({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "isOwner",
     args: [recoveredAddress],
     enabled: !!recoveredAddress,

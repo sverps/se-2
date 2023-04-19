@@ -33,9 +33,9 @@ export const Transaction = ({ transaction, signaturesRequired }: TransactionProp
   });
 
   const queryClient = useQueryClient();
-  const { data: contractData } = useDeployedContractInfo("MetaMultiSigWallet");
+  const { data: contractData } = useDeployedContractInfo("MultisigWallet");
   const { write: submitTransaction } = useScaffoldContractWrite({
-    contractName: "MetaMultiSigWallet",
+    contractName: "MultisigWallet",
     functionName: "executeTransaction",
     args: [
       contractData?.address,

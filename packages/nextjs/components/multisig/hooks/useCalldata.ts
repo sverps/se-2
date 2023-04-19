@@ -3,8 +3,7 @@ import { useDeployedContractInfo } from "../../../hooks/scaffold-eth";
 import { ethers } from "ethers";
 
 export const useCalldata = (functionName?: string, args?: any[]) => {
-  const { data: deployedContractData, isLoading: deployedContractLoading } =
-    useDeployedContractInfo("MetaMultiSigWallet");
+  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo("MultisigWallet");
 
   const calldata = useMemo(() => {
     type DeployedCOntract = Exclude<typeof deployedContractData, undefined>["abi"];

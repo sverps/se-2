@@ -7,7 +7,7 @@ import { DeployFunction } from "hardhat-deploy/types";
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
-const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const deployMultisigWallet: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /*
     On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
 
@@ -19,13 +19,14 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     You can run the `yarn account` command to check your balance in every network.
   */
   const { deployer } = await hre.getNamedAccounts();
+  const chainId = await hre.getChainId();
   const { deploy } = hre.deployments;
 
-  await deploy("MetaMultiSigWallet", {
+  await deploy("MultisigWallet", {
     from: deployer,
     // Contract constructor arguments
     args: [
-      31337,
+      chainId,
       [
         deployer,
         "0x2b459503577F42D1a8E6d73401d3D8F227970d4f",
@@ -44,8 +45,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // const yourContract = await hre.ethers.getContract("YourContract", deployer);
 };
 
-export default deployYourContract;
+export default deployMultisigWallet;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["MetaMultiSigWallet"];
+deployMultisigWallet.tags = ["MultisigWallet"];
