@@ -1,3 +1,4 @@
+import { MergeContractDefinitions } from "./type-utils";
 import {
   Abi,
   AbiParameterToPrimitiveType,
@@ -11,14 +12,15 @@ import { Address, Log, TransactionReceipt } from "viem";
 import { Prettify } from "viem/dist/types/types/utils";
 import { UseContractEventConfig, UseContractReadConfig, UseContractWriteConfig } from "wagmi";
 import contractsData from "~~/generated/deployedContracts";
+import externalContractsData from "~~/generated/externalContracts";
 import scaffoldConfig from "~~/scaffold.config";
 
 export type GenericContractsDeclaration = {
-  [key: number]: readonly {
+  [chainId: number]: readonly {
     name: string;
     chainId: string;
     contracts: {
-      [key: string]: {
+      [contractName: string]: {
         address: Address;
         abi: Abi;
       };
@@ -26,15 +28,37 @@ export type GenericContractsDeclaration = {
   }[];
 };
 
-export const contracts = contractsData as GenericContractsDeclaration | null;
+function deepMerge(
+  deployed?: GenericContractsDeclaration,
+  external?: GenericContractsDeclaration,
+): MergeContractDefinitions<typeof externalContractsData, typeof contractsData> {
+  const combined = deployed
+    ? Object.entries(deployed).reduce(
+        (res, [cId, value]) => ({
+          ...res,
+          [cId]: [
+            ...value.map(({ name, chainId, contracts }) => ({
+              name,
+              chainId,
+              contracts: { ...external?.[cId as any as number]?.[0]?.contracts, ...contracts },
+            })),
+          ],
+        }),
+        {},
+      )
+    : null;
+  return { ...external, ...combined } as any;
+}
+
+export const contracts = deepMerge(contractsData, externalContractsData) as GenericContractsDeclaration | null;
 
 type ConfiguredChainId = (typeof scaffoldConfig)["targetNetwork"]["id"];
 
-type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends { [key in ConfiguredChainId]: any }
+type IsContractDeclarationMissing<TYes, TNo> = ReturnType<typeof deepMerge> extends { [key in ConfiguredChainId]: any }
   ? TNo
   : TYes;
 
-type ContractsDeclaration = IsContractDeclarationMissing<GenericContractsDeclaration, typeof contractsData>;
+type ContractsDeclaration = IsContractDeclarationMissing<GenericContractsDeclaration, ReturnType<typeof deepMerge>>;
 
 export type Chain = keyof ContractsDeclaration;
 
