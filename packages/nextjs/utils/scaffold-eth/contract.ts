@@ -29,8 +29,8 @@ export type GenericContractsDeclaration = {
 };
 
 function deepMerge(
-  deployed?: GenericContractsDeclaration,
-  external?: GenericContractsDeclaration,
+  deployed: GenericContractsDeclaration | null,
+  external: GenericContractsDeclaration | null,
 ): MergeContractDefinitions<typeof externalContractsData, typeof contractsData> {
   const combined = deployed
     ? Object.entries(deployed).reduce(
@@ -47,7 +47,7 @@ function deepMerge(
         {},
       )
     : null;
-  return { ...external, ...combined } as any;
+  return { ...external, ...combined } as MergeContractDefinitions<typeof externalContractsData, typeof contractsData>;
 }
 
 export const contracts = deepMerge(contractsData, externalContractsData) as GenericContractsDeclaration | null;
